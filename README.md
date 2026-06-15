@@ -35,3 +35,15 @@ Pour mener ce projet à bien, voici la "Stack technique" mise en place au fil de
 3. **Docker :** Pour conteneuriser le code et garantir qu'il s'exécute toujours de la même façon.
 4. **FastAPI & Streamlit :** Pour créer une API et un site web permettant aux utilisateurs d'entrer les statistiques d'une partie et d'obtenir une prédiction en direct.
 5. **Airflow :** Pour planifier une routine qui ré-entraîne le modèle tous les lundis avec de potentielles nouvelles données.
+
+---
+
+## Avancement du Projet
+
+### Étape 1 : Configuration et Préparation des Données
+- Mise en place d'un environnement virtuel Python propre et gestion des dépendances via `uv`.
+- Création d'un dossier `src/` pour centraliser la logique métier.
+- Configuration du projet (`config.py`) pour intégrer le dataset League of Legends.
+- `data.py` : Chargement, nettoyage des doublons, suppression de l'identifiant inutile (`gameId`) et séparation Train/Test.
+- `features.py` : Création d'un `Pipeline` pour ajouter des synergies métier (Gold*XP, etc.) avant de standardiser les données (`StandardScaler`, `OneHotEncoder`).
+- **Test validé :** Chargement de 9879 parties, découpage réussi (7903 lignes pour l'entraînement) et transformation mathématique fonctionnelle.
