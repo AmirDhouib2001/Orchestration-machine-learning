@@ -47,3 +47,9 @@ Pour mener ce projet à bien, voici la "Stack technique" mise en place au fil de
 - `data.py` : Chargement, nettoyage des doublons, suppression de l'identifiant inutile (`gameId`) et séparation Train/Test.
 - `features.py` : Création d'un `Pipeline` pour ajouter des synergies métier (Gold*XP, etc.) avant de standardiser les données (`StandardScaler`, `OneHotEncoder`).
 - **Test validé :** Chargement de 9879 parties, découpage réussi (7903 lignes pour l'entraînement) et transformation mathématique fonctionnelle.
+
+### Étape 2 : Entraînement, MLflow et Optimisation
+- **`train.py`** : Entraînement d'un modèle de base (`LogisticRegression`) avec suivi **MLflow** (enregistrement des paramètres, des scores et sauvegarde de la matrice de confusion en image).
+- **`train_models.py`** : Script avancé d'entraînement pour 3 modèles (`LogisticRegression`, `RandomForest`, `XGBoost`).
+- **Optimisation** : Utilisation de `GridSearchCV` pour tester la meilleure configuration de paramètres.
+- **Autologging** : Activation de `mlflow.sklearn.autolog()` pour enregistrer automatiquement et comparer toutes les combinaisons testées sur l'interface web de MLflow.
