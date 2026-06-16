@@ -18,7 +18,7 @@ jobs:
       - name: 🚀 Installation de uv
         uses: astral-sh/setup-uv@v4
         with:
-          enable-cache: true
+          enable-cache: false
 
       - name: 🐍 Configuration de Python 3.11
         uses: actions/setup-python@v5
