@@ -55,3 +55,9 @@ Pour mener ce projet à bien, voici la "Stack technique" mise en place au fil de
 
 ### Optimisation Intelligente (Optuna)
 - **`train_optuna.py`** : Optimisation bayésienne de ces mêmes modèles via **Optuna**. Seul le modèle "Champion" est enregistré dans MLflow pour garder le tableau de bord propre et permettre une comparaison directe avec le GridSearch.
+
+### Déploiement via API (FastAPI)
+- **`api.py`** : Création d'une API REST robuste avec **FastAPI** pour effectuer des prédictions en direct.
+- **Chargement intelligent** : L'API se connecte automatiquement à la base **MLflow** au démarrage, recherche l'entraînement ayant le meilleur F1-score, et charge ce modèle directement en mémoire (zéro manipulation manuelle de `.joblib` !).
+- **Validation (Pydantic)** : Sécurisation de l'API en forçant les utilisateurs à envoyer un JSON contenant exactement les 22 variables attendues, avec des contraintes mathématiques (pas de chiffres négatifs, etc.).
+- **Endpoints** : `/predict` pour obtenir la prédiction (Victoire/Défaite + probabilité) et `/model-info` pour vérifier le nom du modèle actuellement utilisé par l'API.
