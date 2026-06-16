@@ -4,6 +4,7 @@ C'est le SEUL fichier a adapter pour brancher votre propre jeu de donnees :
 data.py, features.py et les scripts d'entrainement lisent toutes leurs
 colonnes via ces constantes. Voir tp/TP_S0_projet_personnel.md.
 """
+
 from __future__ import annotations
 
 import os
@@ -23,16 +24,32 @@ TARGET = "blueWins"
 
 # TODO (S0-3) : colonnes numeriques de votre dataset
 NUMERIC_FEATURES: list[str] = [
-    "blueWardsPlaced", "blueWardsDestroyed", "blueKills", "blueDeaths", 
-    "blueAssists", "blueTotalGold", "blueTotalExperience", "blueGoldDiff", 
-    "blueExperienceDiff", "redWardsPlaced", "redWardsDestroyed", "redKills", 
-    "redDeaths", "redAssists", "redTotalGold", "redTotalExperience"
+    "blueWardsPlaced",
+    "blueWardsDestroyed",
+    "blueKills",
+    "blueDeaths",
+    "blueAssists",
+    "blueTotalGold",
+    "blueTotalExperience",
+    "blueGoldDiff",
+    "blueExperienceDiff",
+    "redWardsPlaced",
+    "redWardsDestroyed",
+    "redKills",
+    "redDeaths",
+    "redAssists",
+    "redTotalGold",
+    "redTotalExperience",
 ]
 
 # TODO (S0-4) : colonnes categorielles (peut rester vide : [])
 CATEGORICAL_FEATURES: list[str] = [
-    "blueFirstBlood", "blueDragons", "blueHeralds",
-    "redFirstBlood", "redDragons", "redHeralds"
+    "blueFirstBlood",
+    "blueDragons",
+    "blueHeralds",
+    "redFirstBlood",
+    "redDragons",
+    "redHeralds",
 ]
 
 RANDOM_STATE = 42
