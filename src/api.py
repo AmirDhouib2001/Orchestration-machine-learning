@@ -42,14 +42,14 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         max_results=1,
     )
 
-    if runs.empty:
+    if runs.empty:  # type: ignore
         logger.error("Aucun entraînement trouvé.")
         yield
         return
 
-    best_run_id = runs.iloc[0].run_id
-    best_f1 = runs.iloc[0]["metrics.f1"]
-    best_run_name = runs.iloc[0].get("tags.mlflow.runName", "Modèle Inconnu")
+    best_run_id = runs.iloc[0].run_id  # type: ignore
+    best_f1 = runs.iloc[0]["metrics.f1"]  # type: ignore
+    best_run_name = runs.iloc[0].get("tags.mlflow.runName", "Modèle Inconnu")  # type: ignore
 
     logger.info(
         f"🏆 Chargement du meilleur modèle ({best_run_name}, F1: {best_f1:.3f})"
