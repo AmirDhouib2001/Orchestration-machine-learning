@@ -1,0 +1,42 @@
+name: CI Code Quality
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  quality:
+    name: Vérification de la Qualité du Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Installation de uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: 🐍 Configuration de Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Installation des dépendances (avec dev)
+        # uv sync va installer toutes tes dépendances de pyproject.toml (dont ruff et mypy)
+        run: uv sync --all-extras
+
+      - name: 🧹 Vérification du formatage (Ruff Format)
+        # Vérifie que le code est bien formaté (sans modifier les fichiers)
+        run: uv run ruff format --check src/
+
+      - name: 🔎 Linting du code (Ruff Check)
+        # Vérifie les erreurs de syntaxe, les imports inutiles, etc.
+        run: uv run ruff check src/
+
+      - name: 🏷️ Typage statique (Mypy)
+        # Vérifie que tu n'as pas de soucis de types (ex: int à la place de str)
+        run: uv run mypy src/
