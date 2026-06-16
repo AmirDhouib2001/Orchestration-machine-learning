@@ -40,16 +40,18 @@ Pour mener ce projet à bien, voici la "Stack technique" mise en place au fil de
 
 ## Avancement du Projet
 
-### Étape 1 : Configuration et Préparation des Données
+### Configuration et Préparation des Données
 - Mise en place d'un environnement virtuel Python propre et gestion des dépendances via `uv`.
 - Création d'un dossier `src/` pour centraliser la logique métier.
 - Configuration du projet (`config.py`) pour intégrer le dataset League of Legends.
 - `data.py` : Chargement, nettoyage des doublons, suppression de l'identifiant inutile (`gameId`) et séparation Train/Test.
 - `features.py` : Création d'un `Pipeline` pour ajouter des synergies métier (Gold*XP, etc.) avant de standardiser les données (`StandardScaler`, `OneHotEncoder`).
-- **Test validé :** Chargement de 9879 parties, découpage réussi (7903 lignes pour l'entraînement) et transformation mathématique fonctionnelle.
 
-### Étape 2 : Entraînement, MLflow et Optimisation
-- **`train.py`** : Entraînement d'un modèle de base (`LogisticRegression`) avec suivi **MLflow** (enregistrement des paramètres, des scores et sauvegarde de la matrice de confusion en image).
-- **`train_models.py`** : Script avancé d'entraînement pour 3 modèles (`LogisticRegression`, `RandomForest`, `XGBoost`).
-- **Optimisation** : Utilisation de `GridSearchCV` pour tester la meilleure configuration de paramètres.
-- **Autologging** : Activation de `mlflow.sklearn.autolog()` pour enregistrer automatiquement et comparer toutes les combinaisons testées sur l'interface web de MLflow.
+### Entraînement Baseline (MLflow)
+- **`train.py`** : Entraînement d'un premier modèle simple (`LogisticRegression`) avec suivi **MLflow** (enregistrement des paramètres, des scores et sauvegarde de la matrice de confusion en image).
+
+### Optimisation par Grille (GridSearchCV)
+- **`train_models.py`** : Entraînement de 3 modèles (`LogisticRegression`, `RandomForest`, `XGBoost`) optimisés via **GridSearchCV** (avec `mlflow.sklearn.autolog()` pour tracer chaque essai sur l'interface web).
+
+### Optimisation Intelligente (Optuna)
+- **`train_optuna.py`** : Optimisation bayésienne de ces mêmes modèles via **Optuna**. Seul le modèle "Champion" est enregistré dans MLflow pour garder le tableau de bord propre et permettre une comparaison directe avec le GridSearch.
