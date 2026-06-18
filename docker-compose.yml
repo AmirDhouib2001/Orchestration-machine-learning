@@ -8,6 +8,7 @@ services:
       --artifacts-destination /mlflow/artifacts
       --serve-artifacts
       --allowed-hosts "*"
+      --cors-allowed-origins "http://158.178.195.9:5000,http://127.0.0.1:5000,http://localhost:5000"
     ports:
       - "5000:5000"
     volumes:
