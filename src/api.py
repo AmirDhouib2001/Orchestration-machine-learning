@@ -63,7 +63,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     ml.clear()
 
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="League of Legends API", version="1.0.0", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # -------------------------------------------------------------------------
