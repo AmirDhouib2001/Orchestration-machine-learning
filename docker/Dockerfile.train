@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir .
 COPY src/ ./src/
 COPY data/ ./data/
 
-CMD ["python", "-m", "src.train"]
+CMD ["python", "-m", "src.train_optuna"]
