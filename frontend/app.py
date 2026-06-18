@@ -1,5 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from pathlib import Path
+import json
 
 st.set_page_config(layout="wide", page_title="LoL Predictor", initial_sidebar_state="collapsed")
 
@@ -15,7 +17,16 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-html_code = """
+readme_path = Path(__file__).resolve().parents[1] / "README.md"
+readme_content = ""
+if readme_path.exists():
+    with open(readme_path, "r", encoding="utf-8") as f:
+        readme_content = f.read()
+
+# Safe JSON dump for the README content
+readme_json = json.dumps(readme_content)
+
+html_code = f"""
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -25,16 +36,33 @@ html_code = """
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; height: 100%; }
-        body { background: #070A12; font-family: 'Barlow', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.09); border-radius: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        @keyframes pulseDot { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
-        [v-cloak] { display: none; }
+        * {{ box-sizing: border-box; }}
+        html, body {{ margin: 0; padding: 0; height: 100%; }}
+        body {{ background: #070A12; font-family: 'Barlow', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }}
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {{ -webkit-appearance: none; margin: 0; }}
+        ::-webkit-scrollbar {{ width: 10px; height: 10px; }}
+        ::-webkit-scrollbar-thumb {{ background: rgba(255,255,255,.09); border-radius: 8px; }}
+        ::-webkit-scrollbar-track {{ background: transparent; }}
+        @keyframes pulseDot {{ 0%, 100% {{ opacity: .35; }} 50% {{ opacity: 1; }} }}
+        [v-cloak] {{ display: none; }}
+        
+        .markdown-body {{
+            color: #A8B0C2;
+            font-size: 15px;
+            line-height: 1.7;
+        }}
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {{
+            color: #E6EAF2;
+            font-family: 'Rajdhani', sans-serif;
+            margin-top: 24px;
+        }}
+        .markdown-body a {{ color: #5FB0FF; text-decoration: none; }}
+        .markdown-body a:hover {{ text-decoration: underline; }}
+        .markdown-body code {{ background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }}
+        .markdown-body pre {{ background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.05); }}
+        .markdown-body pre code {{ background: transparent; padding: 0; }}
     </style>
 </head>
 <body>
@@ -96,25 +124,25 @@ html_code = """
         <div style="display: flex; align-items: center; gap: 28px;">
           <div style="flex: none; min-width: 120px;">
             <div style="font-family: 'Rajdhani'; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5FB0FF;">Équipe Bleue</div>
-            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 32px; color: #5FB0FF; line-height: 1;">{{ bluePct }}%</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 32px; color: #5FB0FF; line-height: 1;">{{{{ bluePct }}}}%</div>
           </div>
 
           <div style="flex: 1; min-width: 0;">
             <div style="position: relative; height: 14px; border-radius: 999px; overflow: hidden; background: linear-gradient(90deg,#7a2b33,#FF5468); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);">
-              <div :style="{ width: bluePct + '%', position: 'absolute', left: 0, top: 0, bottom: 0, background: 'linear-gradient(90deg,#1F6FCB,#3FA0FF)', transition: 'width .45s cubic-bezier(.4,0,.2,1)' }"></div>
-              <div :style="{ left: bluePct + '%', position: 'absolute', top: '-3px', bottom: '-3px', width: '2px', background: '#F2F5FB', boxShadow: '0 0 8px rgba(255,255,255,.7)', transition: 'left .45s cubic-bezier(.4,0,.2,1)' }"></div>
+              <div :style="{{ width: bluePct + '%', position: 'absolute', left: 0, top: 0, bottom: 0, background: 'linear-gradient(90deg,#1F6FCB,#3FA0FF)', transition: 'width .45s cubic-bezier(.4,0,.2,1)' }}"></div>
+              <div :style="{{ left: bluePct + '%', position: 'absolute', top: '-3px', bottom: '-3px', width: '2px', background: '#F2F5FB', boxShadow: '0 0 8px rgba(255,255,255,.7)', transition: 'left .45s cubic-bezier(.4,0,.2,1)' }}"></div>
             </div>
             <div style="display: flex; justify-content: center; margin-top: 11px;">
               <div style="display: flex; align-items: center; gap: 9px; padding: 6px 15px; border-radius: 999px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);">
                 <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--accent, #C9A227); animation: pulseDot 1.6s infinite;"></span>
-                <span style="font-size: 13px; color: #C8D0E0;"><strong :style="{ color: favoriteColor, fontWeight: 700 }">{{ favoriteLabel }}</strong> favorite · {{ confidence }}% de confiance</span>
+                <span style="font-size: 13px; color: #C8D0E0;"><strong :style="{{ color: favoriteColor, fontWeight: 700 }}">{{{{ favoriteLabel }}}}</strong> favorite · {{{{ confidence }}}}% de confiance</span>
               </div>
             </div>
           </div>
 
           <div style="flex: none; min-width: 120px; text-align: right;">
             <div style="font-family: 'Rajdhani'; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #FF7B88;">Équipe Rouge</div>
-            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 32px; color: #FF7B88; line-height: 1;">{{ redPct }}%</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 32px; color: #FF7B88; line-height: 1;">{{{{ redPct }}}}%</div>
           </div>
         </div>
       </div>
@@ -126,7 +154,7 @@ html_code = """
             <button v-if="error" style="height: 38px; padding: 0 16px; border-radius: 9px; background: rgba(255,84,104,.1); border: 1px solid rgba(255,84,104,.2); color: #FF5468; font-family: 'Barlow'; font-size: 13px; font-weight: 600;">⚠️ Erreur API</button>
             <button @click="loadExample" style="height: 38px; padding: 0 16px; border-radius: 9px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: #C8D0E0; font-family: 'Barlow'; font-size: 13px; font-weight: 600; cursor: pointer;" onmouseover="this.style.background='rgba(255,255,255,.09)';" onmouseout="this.style.background='rgba(255,255,255,.05)';">Charger un exemple</button>
             <button @click="resetData" style="height: 38px; padding: 0 16px; border-radius: 9px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: #C8D0E0; font-family: 'Barlow'; font-size: 13px; font-weight: 600; cursor: pointer;" onmouseover="this.style.background='rgba(255,255,255,.09)';" onmouseout="this.style.background='rgba(255,255,255,.05)';">Réinitialiser</button>
-            <button @click="doPredict" style="height: 38px; padding: 0 20px; border-radius: 9px; background: var(--accent, #C9A227); border: none; color: #0A0E1A; font-family: 'Barlow'; font-size: 14px; font-weight: 700; cursor: pointer;">{{ loading ? 'Calcul...' : 'Prédire (API)' }}</button>
+            <button @click="doPredict" style="height: 38px; padding: 0 20px; border-radius: 9px; background: var(--accent, #C9A227); border: none; color: #0A0E1A; font-family: 'Barlow'; font-size: 14px; font-weight: 700; cursor: pointer;">{{{{ loading ? 'Calcul...' : 'Prédire' }}}}</button>
           </div>
         </div>
 
@@ -139,17 +167,17 @@ html_code = """
                 <span style="width: 11px; height: 11px; border-radius: 50%; background: #3FA0FF; box-shadow: 0 0 10px #3FA0FF;"></span>
                 <span style="font-family: 'Rajdhani'; font-weight: 700; font-size: 19px; letter-spacing: .02em; color: #9FCBFF;">Équipe Bleue</span>
               </div>
-              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #5FB0FF;">{{ bluePct }}%</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #5FB0FF;">{{{{ bluePct }}}}%</span>
             </div>
             
             <div v-for="group in statGroups" :key="'b-'+group.title" style="margin-top: 16px;">
               <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 11px;">
-                <span style="font-family: 'Rajdhani'; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent, #C9A227);">{{ group.title }}</span>
+                <span style="font-family: 'Rajdhani'; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent, #C9A227);">{{{{ group.title }}}}</span>
                 <span style="flex: 1; height: 1px; background: rgba(255,255,255,.07);"></span>
               </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 11px;">
                 <div v-for="f in group.items" :key="'b-'+f.key" style="display: flex; flex-direction: column; gap: 6px;">
-                  <span style="font-size: 11px; letter-spacing: .03em; text-transform: uppercase; color: #8A93A6; font-weight: 600;">{{ f.label }}</span>
+                  <span style="font-size: 11px; letter-spacing: .03em; text-transform: uppercase; color: #8A93A6; font-weight: 600;">{{{{ f.label }}}}</span>
                   <div style="display: flex; align-items: center; height: 40px; background: #0A1120; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; overflow: hidden;">
                     <button @click="bump('blue', f.key, -(f.step||1))" style="width: 38px; height: 100%; flex: none; background: transparent; border: none; color: #8A93A6; font-size: 20px; cursor: pointer; line-height: 1;" onmouseover="this.style.background='rgba(255,255,255,.06)'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#8A93A6';">−</button>
                     <input type="number" v-model.number="blue[f.key]" style="flex: 1; min-width: 0; width: 100%; background: transparent; border: none; color: #E6EAF2; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500; outline: none;">
@@ -167,17 +195,17 @@ html_code = """
                 <span style="width: 11px; height: 11px; border-radius: 50%; background: #FF5468; box-shadow: 0 0 10px #FF5468;"></span>
                 <span style="font-family: 'Rajdhani'; font-weight: 700; font-size: 19px; letter-spacing: .02em; color: #FFB0B8;">Équipe Rouge</span>
               </div>
-              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #FF7B88;">{{ redPct }}%</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #FF7B88;">{{{{ redPct }}}}%</span>
             </div>
             
             <div v-for="group in statGroups" :key="'r-'+group.title" style="margin-top: 16px;">
               <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 11px;">
-                <span style="font-family: 'Rajdhani'; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent, #C9A227);">{{ group.title }}</span>
+                <span style="font-family: 'Rajdhani'; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent, #C9A227);">{{{{ group.title }}}}</span>
                 <span style="flex: 1; height: 1px; background: rgba(255,255,255,.07);"></span>
               </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 11px;">
                 <div v-for="f in group.items" :key="'r-'+f.key" style="display: flex; flex-direction: column; gap: 6px;">
-                  <span style="font-size: 11px; letter-spacing: .03em; text-transform: uppercase; color: #8A93A6; font-weight: 600;">{{ f.label }}</span>
+                  <span style="font-size: 11px; letter-spacing: .03em; text-transform: uppercase; color: #8A93A6; font-weight: 600;">{{{{ f.label }}}}</span>
                   <div style="display: flex; align-items: center; height: 40px; background: #0A1120; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; overflow: hidden;">
                     <button @click="bump('red', f.key, -(f.step||1))" style="width: 38px; height: 100%; flex: none; background: transparent; border: none; color: #8A93A6; font-size: 20px; cursor: pointer; line-height: 1;" onmouseover="this.style.background='rgba(255,255,255,.06)'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#8A93A6';">−</button>
                     <input type="number" v-model.number="red[f.key]" style="flex: 1; min-width: 0; width: 100%; background: transparent; border: none; color: #E6EAF2; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500; outline: none;">
@@ -192,75 +220,74 @@ html_code = """
       </div>
     </div>
 
-    <div v-if="tab === 'about'" style="padding: 34px 40px 56px; max-width: 760px;">
-      <h2 style="margin: 0 0 14px; font-family: 'Rajdhani'; font-weight: 700; font-size: 24px; color: #E6EAF2;">À propos du projet</h2>
-      <p style="color: #A8B0C2; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">Ce projet prédit l'équipe gagnante d'une partie de League of Legends à partir des statistiques relevées à la 10ᵉ minute. Le modèle de machine learning est servi par une API <strong style="color: #fff;">FastAPI</strong>, suivie via <strong style="color: #fff;">MLflow</strong>, le tout conteneurisé avec Docker.</p>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px;">
-        <div style="padding: 16px; border-radius: 12px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07);">
-          <div style="font-family: 'Rajdhani'; font-weight: 700; color: var(--accent, #C9A227); letter-spacing: .06em; margin-bottom: 5px;">Modèle</div>
-          <div style="color: #A8B0C2; font-size: 13.5px; line-height: 1.6;">Classification entraînée sur des parties classées, features extraites à 10 min.</div>
-        </div>
-        <div style="padding: 16px; border-radius: 12px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07);">
-          <div style="font-family: 'Rajdhani'; font-weight: 700; color: var(--accent, #C9A227); letter-spacing: .06em; margin-bottom: 5px;">Stack</div>
-          <div style="color: #A8B0C2; font-size: 13.5px; line-height: 1.6;">FastAPI · MLflow · Docker · Frontend interactif VueJS (Zero-Touch).</div>
-        </div>
-      </div>
-      <p style="color: #5C6679; font-size: 13px; margin-top: 22px;">Réalisé par Amir Dhouib.</p>
+    <div v-if="tab === 'about'" style="padding: 34px 40px 56px; max-width: 960px;">
+      <div class="markdown-body" v-html="parsedReadme"></div>
     </div>
 
   </main>
 </div>
 
 <script>
-const { createApp, ref, computed, onMounted, watch } = Vue;
+const {{ createApp, ref, computed, onMounted, watch }} = Vue;
 
-const DEFAULTS = {
+const DEFAULTS = {{
   kills: 5, deaths: 5, assists: 5,
   gold: 15000, cs: 200, avgLevel: 6,
   towers: 0, dragons: 0, heralds: 0,
   wardsPlaced: 15, wardsDestroyed: 2,
   firstBlood: 0
-};
+}};
 
-const EXAMPLE_BLUE = { kills: 8, deaths: 3, assists: 11, gold: 17200, cs: 225, avgLevel: 7, towers: 2, dragons: 1, heralds: 1, wardsPlaced: 19, wardsDestroyed: 4, firstBlood: 1 };
-const EXAMPLE_RED  = { kills: 3, deaths: 8, assists: 4, gold: 14600, cs: 198, avgLevel: 6, towers: 0, dragons: 0, heralds: 0, wardsPlaced: 13, wardsDestroyed: 1, firstBlood: 0 };
+const EXAMPLE_BLUE = {{ kills: 8, deaths: 3, assists: 11, gold: 17200, cs: 225, avgLevel: 7, towers: 2, dragons: 1, heralds: 1, wardsPlaced: 19, wardsDestroyed: 4, firstBlood: 1 }};
+const EXAMPLE_RED  = {{ kills: 3, deaths: 8, assists: 4, gold: 14600, cs: 198, avgLevel: 6, towers: 0, dragons: 0, heralds: 0, wardsPlaced: 13, wardsDestroyed: 1, firstBlood: 0 }};
 
 const STAT_GROUPS = [
-  { title: 'Combat',    items: [ {key: 'kills', label: 'Kills'}, {key: 'deaths', label: 'Morts'}, {key: 'assists', label: 'Assistances'} ] },
-  { title: 'Économie',  items: [ {key: 'gold', label: 'Or total', step: 500}, {key: 'cs', label: 'CS (minions)', step: 5}, {key: 'avgLevel', label: 'Niveau moyen'} ] },
-  { title: 'Objectifs', items: [ {key: 'towers', label: 'Tours détruites'}, {key: 'dragons', label: 'Dragons'}, {key: 'heralds', label: 'Hérauts'}, {key: 'firstBlood', label: 'Premier Sang (0=Non, 1=Oui)'} ] },
-  { title: 'Vision',    items: [ {key: 'wardsPlaced', label: 'Wards placées'}, {key: 'wardsDestroyed', label: 'Wards détruites'} ] },
+  {{ title: 'Combat',    items: [ {{key: 'kills', label: 'Kills'}}, {{key: 'deaths', label: 'Morts'}}, {{key: 'assists', label: 'Assistances'}} ] }},
+  {{ title: 'Économie',  items: [ {{key: 'gold', label: 'Or total', step: 500}}, {{key: 'cs', label: 'CS (minions)', step: 5}}, {{key: 'avgLevel', label: 'Niveau moyen'}} ] }},
+  {{ title: 'Objectifs', items: [ {{key: 'towers', label: 'Tours détruites'}}, {{key: 'dragons', label: 'Dragons'}}, {{key: 'heralds', label: 'Hérauts'}}, {{key: 'firstBlood', label: 'Premier Sang (0=Non, 1=Oui)'}} ] }},
+  {{ title: 'Vision',    items: [ {{key: 'wardsPlaced', label: 'Wards placées'}}, {{key: 'wardsDestroyed', label: 'Wards détruites'}} ] }},
 ];
 
-createApp({
-  setup() {
+// Inject the README markdown string
+const rawReadme = {readme_json};
+
+createApp({{
+  setup() {{
     const tab = ref('prediction');
     const apiUrl = ref('http://localhost:8000');
-    const blue = ref({ ...DEFAULTS, firstBlood: 1 });
-    const red = ref({ ...DEFAULTS });
+    const blue = ref({{ ...DEFAULTS, firstBlood: 1 }});
+    const red = ref({{ ...DEFAULTS }});
     
     const bluePct = ref(50);
     const redPct = ref(50);
     const loading = ref(false);
     const error = ref(false);
     
-    onMounted(() => {
-        const host = window.location.hostname;
-        apiUrl.value = `http://${host}:8000`;
-    });
+    const parsedReadme = computed(() => marked.parse(rawReadme));
+    
+    onMounted(() => {{
+        // Get the host from the parent window if possible, else fallback to window.location
+        let host = 'localhost';
+        try {{
+            host = window.parent.location.hostname || window.location.hostname || 'localhost';
+        }} catch (e) {{
+            host = window.location.hostname || 'localhost';
+        }}
+        apiUrl.value = `http://${{host}}:8000`;
+    }});
 
     const statGroups = STAT_GROUPS;
 
-    const bump = (team, key, delta) => {
+    const bump = (team, key, delta) => {{
       const obj = team === 'blue' ? blue.value : red.value;
       obj[key] = Math.max(0, (Number(obj[key]) || 0) + delta);
-    };
+    }};
 
-    const doPredict = async () => {
+    const doPredict = async () => {{
         loading.value = true;
         error.value = false;
         
-        const payload = {
+        const payload = {{
             blueWardsPlaced: blue.value.wardsPlaced,
             blueWardsDestroyed: blue.value.wardsDestroyed,
             blueKills: blue.value.kills,
@@ -283,29 +310,29 @@ createApp({
             redFirstBlood: red.value.firstBlood,
             redDragons: red.value.dragons,
             redHeralds: red.value.heralds
-        };
+        }};
 
-        try {
-            const res = await fetch(`${apiUrl.value}/predict`, {
+        try {{
+            const res = await fetch(`${{apiUrl.value}}/predict`, {{
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {{ 'Content-Type': 'application/json' }},
                 body: JSON.stringify(payload)
-            });
+            }});
             if (!res.ok) throw new Error('API Error');
             const data = await res.json();
             const pBlue = data.probability;
             bluePct.value = Math.round(pBlue * 100);
             redPct.value = 100 - bluePct.value;
-        } catch (e) {
+        }} catch (e) {{
             console.error(e);
             error.value = true;
             calculateDummyScore();
-        } finally {
+        }} finally {{
             loading.value = false;
-        }
-    };
+        }}
+    }};
     
-    const calculateDummyScore = () => {
+    const calculateDummyScore = () => {{
         const b = blue.value;
         const r = red.value;
         const score =
@@ -324,20 +351,20 @@ createApp({
         const p = 1 / (1 + Math.exp(-score));
         bluePct.value = Math.round(p * 100);
         redPct.value = 100 - bluePct.value;
-    };
+    }};
 
-    const resetData = () => {
-      blue.value = { ...DEFAULTS, firstBlood: 1 };
-      red.value = { ...DEFAULTS, firstBlood: 0 };
+    const resetData = () => {{
+      blue.value = {{ ...DEFAULTS, firstBlood: 1 }};
+      red.value = {{ ...DEFAULTS, firstBlood: 0 }};
       bluePct.value = 50;
       redPct.value = 50;
-    };
+    }};
 
-    const loadExample = () => {
-      blue.value = { ...EXAMPLE_BLUE };
-      red.value = { ...EXAMPLE_RED };
+    const loadExample = () => {{
+      blue.value = {{ ...EXAMPLE_BLUE }};
+      red.value = {{ ...EXAMPLE_RED }};
       doPredict();
-    };
+    }};
 
     const blueFav = computed(() => bluePct.value >= 50);
     const confidence = computed(() => Math.max(bluePct.value, redPct.value));
@@ -347,26 +374,28 @@ createApp({
     const tabBase = "height: 42px; padding: 0 18px; background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: 'Rajdhani'; font-weight: 700; font-size: 15px; letter-spacing: .03em; cursor: pointer; color: #7C859A;";
     const tabOn = "height: 42px; padding: 0 18px; background: transparent; border: none; border-bottom: 2px solid var(--accent, #C9A227); margin-bottom: -1px; font-family: 'Rajdhani'; font-weight: 700; font-size: 15px; letter-spacing: .03em; cursor: pointer; color: #F2F5FB;";
 
-    const mlflowUrl = computed(() => {
-        const host = window.location.hostname;
-        return `http://${host}:5000`;
-    });
+    const mlflowUrl = computed(() => {{
+        let host = 'localhost';
+        try {{ host = window.parent.location.hostname || window.location.hostname || 'localhost'; }} catch (e) {{ host = window.location.hostname || 'localhost'; }}
+        return `http://${{host}}:5000`;
+    }});
     
-    const swaggerUrl = computed(() => {
-        const host = window.location.hostname;
-        return `http://${host}:8000/docs`;
-    });
+    const swaggerUrl = computed(() => {{
+        let host = 'localhost';
+        try {{ host = window.parent.location.hostname || window.location.hostname || 'localhost'; }} catch (e) {{ host = window.location.hostname || 'localhost'; }}
+        return `http://${{host}}:8000/docs`;
+    }});
 
-    return {
+    return {{
       tab, apiUrl, blue, red,
       bluePct, redPct, loading, error,
       statGroups,
       bump, doPredict, resetData, loadExample,
       blueFav, confidence, favoriteLabel, favoriteColor,
-      tabBase, tabOn, mlflowUrl, swaggerUrl
-    };
-  }
-}).mount('#app');
+      tabBase, tabOn, mlflowUrl, swaggerUrl, parsedReadme
+    }};
+  }}
+}}).mount('#app');
 </script>
 </body>
 </html>
