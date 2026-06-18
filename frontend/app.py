@@ -6,8 +6,9 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
+
 import httpx
-import pandas as pd
 import streamlit as st
 
 API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000")
@@ -36,7 +37,7 @@ with st.sidebar:
 
 api_url = st.text_input("URL de l'API (Réseau Interne Docker)", value=API_URL)
 
-predict_tab, history_tab = st.tabs(["Prédiction", "Historique"])
+predict_tab, about_tab = st.tabs(["🔮 Prédiction", "📖 À Propos du Projet"])
 
 with predict_tab:
     st.subheader("Saisir les statistiques de la partie (à 10 minutes)")
@@ -125,7 +126,11 @@ with predict_tab:
         except httpx.HTTPError as exc:
             st.error(f"Appel à l'API impossible : {exc}")
 
-with history_tab:
-    st.subheader("Historique des prévisions")
-    st.info("Aucun journal de prévisions : ajoutez un endpoint /predictions à l'API (bonus).")
-    _ = pd  # Pour éviter l'erreur ruff (variable inutilisée)
+with about_tab:
+    st.subheader("Informations sur le Projet")
+    readme_path = Path(__file__).resolve().parents[1] / "README.md"
+    if readme_path.exists():
+        with open(readme_path, "r", encoding="utf-8") as f:
+            st.markdown(f.read())
+    else:
+        st.warning("Le fichier README.md est introuvable à cet emplacement.")
