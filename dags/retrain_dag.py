@@ -31,6 +31,10 @@ def task_prepare_data(**context) -> None:
 
 
 def task_train(**context) -> None:
+    import os
+    os.environ["MLFLOW_TRACKING_URI"] = "http://158.178.195.9:5000"
+    os.environ["MLFLOW_EXPERIMENT"] = "League_of_Legends_Models"
+    
     from src.train import train
     metrics = train()
     context["ti"].xcom_push(key="f1", value=metrics["f1"])
