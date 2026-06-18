@@ -14,7 +14,7 @@ import streamlit as st
 API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000")
 
 st.set_page_config(page_title="Prédiction LoL", layout="wide")
-st.title("League of Legends - Prédiction de Victoire (Équipe Bleue)")
+st.title("League of Legends - Prédiction de Victoire (Équipe Bleue) - par Amir DHOUIB")
 
 with st.sidebar:
     st.header("🔗 Liens Utiles")
