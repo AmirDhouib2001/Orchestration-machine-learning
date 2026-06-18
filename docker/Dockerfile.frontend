@@ -6,6 +6,7 @@ COPY pyproject.toml ./
 RUN pip install --no-cache-dir .
 
 COPY frontend/ ./frontend/
+COPY README.md ./
 
 EXPOSE 8501
 CMD ["streamlit", "run", "frontend/app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
