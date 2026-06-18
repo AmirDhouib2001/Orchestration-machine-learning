@@ -61,3 +61,18 @@ Pour mener ce projet à bien, voici la "Stack technique" mise en place au fil de
 - **Chargement intelligent** : L'API se connecte automatiquement à la base **MLflow** au démarrage, recherche l'entraînement ayant le meilleur F1-score, et charge ce modèle directement en mémoire (zéro manipulation manuelle de `.joblib` !).
 - **Validation (Pydantic)** : Sécurisation de l'API en forçant les utilisateurs à envoyer un JSON contenant exactement les 22 variables attendues, avec des contraintes mathématiques (pas de chiffres négatifs, etc.).
 - **Endpoints** : `/predict` pour obtenir la prédiction (Victoire/Défaite + probabilité) et `/model-info` pour vérifier le nom du modèle actuellement utilisé par l'API.
+
+### Script de Test (Client)
+- **`predict_client.py`** : Création d'un script de test automatisé qui simule une vraie requête HTTP avec des données du jeu d'entraînement pour valider le bon fonctionnement de l'API.
+
+### Interface Graphique (Streamlit)
+- **`frontend/app.py`** : Développement de l'interface utilisateur complète. Formulaire ergonomique sur deux colonnes (Équipe Bleue vs Rouge) avec calcul automatique des variables de différence. Affichage dynamique du résultat final (Barre de progression, messages de victoire).
+
+### Conteneurisation (Docker & Docker Compose)
+- **Dockerfiles** : Création d'images Docker légères et isolées pour 3 briques : l'API, le Frontend, et le script d'entraînement Optuna.
+- **Docker Compose** : Orchestration de la stack complète. Lancement d'un serveur MLflow, entraînement du modèle pour remplir la base, puis lancement de l'API et du Frontend. Communication inter-conteneurs optimisée et sécurisée.
+- **Environnement** : Ajout d'un système de `.env` pour la gestion facile des URLs et ports locaux.
+
+### Industrialisation CI/CD (GitHub Actions)
+- **CI (Intégration Continue)** : Pipeline vérifiant la qualité du code à chaque push (Formatage via `Ruff`, Typage via `Mypy`) et effectuant un test d'entraînement en simulant une base de données MLflow (SQLite) dans le runner GitHub.
+- **CD (Déploiement Continu)** : Build automatisé de l'image Docker de l'API et hébergement public sur le GitHub Container Registry (GHCR) lors d'un push sur `main`.
