@@ -115,6 +115,7 @@ html_code = f"""
 
       <div style="display: flex; gap: 4px; margin-top: 24px; border-bottom: 1px solid rgba(255,255,255,.07);">
         <button @click="tab = 'prediction'" :style="tab === 'prediction' ? tabOn : tabBase">Prédiction</button>
+        <button @click="tab = 'models'" :style="tab === 'models' ? tabOn : tabBase">Modèles Entraînés</button>
         <button @click="tab = 'about'" :style="tab === 'about' ? tabOn : tabBase">À propos du projet</button>
       </div>
     </header>
@@ -220,6 +221,42 @@ html_code = f"""
       </div>
     </div>
 
+    <div v-if="tab === 'models'" style="padding: 34px 40px 56px; max-width: 960px;">
+      <h2 style="margin: 0 0 14px; font-family: 'Rajdhani'; font-weight: 700; font-size: 24px; color: #E6EAF2;">Modèles Entraînés (MLflow)</h2>
+      
+      <!-- Active Model -->
+      <div style="margin-bottom: 24px; padding: 18px; border-radius: 12px; background: rgba(201,162,39,.1); border: 1px solid rgba(201,162,39,.3);">
+         <h3 style="margin: 0 0 8px; font-family: 'Rajdhani'; color: var(--accent, #C9A227);">Modèle Actif (en production)</h3>
+         <div v-if="activeModel" style="color: #E6EAF2; font-size: 15px;">
+             <strong>Nom :</strong> {{{{ activeModel.model_name }}}}<br>
+             <strong>F1-Score :</strong> {{{{ activeModel.f1_score.toFixed(4) }}}}
+         </div>
+         <div v-else style="color: #A8B0C2; font-size: 14px;">Chargement du modèle actif...</div>
+      </div>
+      
+      <!-- All Models List -->
+      <h3 style="margin: 0 0 12px; font-family: 'Rajdhani'; color: #E6EAF2;">Historique des entraînements</h3>
+      <div v-if="modelsList.length > 0" style="background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; color: #C8D0E0;">
+              <thead>
+                  <tr style="background: rgba(255,255,255,.05); border-bottom: 1px solid rgba(255,255,255,.1);">
+                      <th style="padding: 12px 16px; font-weight: 600;">Nom du Modèle</th>
+                      <th style="padding: 12px 16px; font-weight: 600;">F1-Score</th>
+                      <th style="padding: 12px 16px; font-weight: 600;">Accuracy</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr v-for="(m, i) in modelsList" :key="m.run_id" :style="i !== modelsList.length - 1 ? 'border-bottom: 1px solid rgba(255,255,255,.05);' : ''">
+                      <td style="padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 13px;">{{{{ m.name }}}}</td>
+                      <td style="padding: 12px 16px; color: #5FB0FF; font-weight: 600;">{{{{ m.f1_score.toFixed(4) }}}}</td>
+                      <td style="padding: 12px 16px; color: #9FB6D6;">{{{{ m.accuracy.toFixed(4) }}}}</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      <div v-else style="color: #A8B0C2; font-size: 14px;">Chargement des modèles ou aucun modèle trouvé...</div>
+    </div>
+
     <div v-if="tab === 'about'" style="padding: 34px 40px 56px; max-width: 960px;">
       <div class="markdown-body" v-html="parsedReadme"></div>
     </div>
@@ -263,7 +300,27 @@ createApp({{
     const loading = ref(false);
     const error = ref(false);
     
+    const activeModel = ref(null);
+    const modelsList = ref([]);
+    
     const parsedReadme = computed(() => marked.parse(rawReadme));
+    
+    const fetchModelsData = async () => {{
+        try {{
+            const resInfo = await fetch(`${{apiUrl.value}}/model-info`);
+            if (resInfo.ok) {{
+                activeModel.value = await resInfo.json();
+            }}
+            
+            const resModels = await fetch(`${{apiUrl.value}}/models`);
+            if (resModels.ok) {{
+                const data = await resModels.json();
+                modelsList.value = data.models || [];
+            }}
+        }} catch (e) {{
+            console.error("Erreur chargement MLflow:", e);
+        }}
+    }};
     
     onMounted(() => {{
         // Get the host from the parent window if possible, else fallback to window.location
@@ -274,6 +331,8 @@ createApp({{
             host = window.location.hostname || 'localhost';
         }}
         apiUrl.value = `http://${{host}}:8000`;
+        
+        fetchModelsData();
     }});
 
     const statGroups = STAT_GROUPS;
@@ -389,7 +448,7 @@ createApp({{
     return {{
       tab, apiUrl, blue, red,
       bluePct, redPct, loading, error,
-      statGroups,
+      statGroups, activeModel, modelsList,
       bump, doPredict, resetData, loadExample,
       blueFav, confidence, favoriteLabel, favoriteColor,
       tabBase, tabOn, mlflowUrl, swaggerUrl, parsedReadme
