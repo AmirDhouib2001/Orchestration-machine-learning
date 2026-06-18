@@ -58,3 +58,21 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    name: Déploiement sur serveur Oracle
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exécution des commandes SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/mlops/Orchestration-machine-learning
+            git pull origin main
+            sudo docker compose build
+            sudo docker compose up -d
+            cp -r src/ data/ dags/
