@@ -115,7 +115,13 @@ def train_with_optuna(
         mlflow.sklearn.log_model(
             best_pipeline,
             artifact_path="model",
-            skops_trusted_types=["src.features.add_lol_synergies"],
+            skops_trusted_types=[
+                "src.features.add_lol_synergies",
+                "xgboost.core.Booster",
+                "xgboost.sklearn.XGBClassifier",
+                "lightgbm.sklearn.LGBMClassifier",
+                "lightgbm.basic.Booster",
+            ],
         )
 
 
