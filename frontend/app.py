@@ -19,6 +19,7 @@ st.title("League of Legends - Prédiction de Victoire (Équipe Bleue) - par Amir
 with st.sidebar:
     st.header("🔗 Liens Utiles")
     st.link_button("📖 Voir le README (Projet GitHub)", "https://github.com/AmirDhouib2001/Orchestration-machine-learning#readme")
+    st.link_button("📈 Dashboard MLflow", "http://158.178.195.9:5000")
     
     st.markdown("---")
     st.header("⚙️ API FastAPI")
