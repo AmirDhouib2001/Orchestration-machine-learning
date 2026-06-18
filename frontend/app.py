@@ -15,7 +15,26 @@ API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000")
 st.set_page_config(page_title="Prédiction LoL", layout="wide")
 st.title("League of Legends - Prédiction de Victoire (Équipe Bleue)")
 
-api_url = st.text_input("URL de l'API", value=API_URL)
+with st.sidebar:
+    st.header("🔗 Liens Utiles")
+    st.link_button("📖 Voir le README (Projet GitHub)", "https://github.com/AmirDhouib2001/Orchestration-machine-learning#readme")
+    
+    st.markdown("---")
+    st.header("⚙️ API FastAPI")
+    if st.button("Afficher les Endpoints"):
+        st.session_state.show_api_details = not st.session_state.get("show_api_details", False)
+        
+    if st.session_state.get("show_api_details", False):
+        st.info("""
+        **Endpoints Disponibles :**
+        - `GET /health` : Vérifie si l'API est en ligne.
+        - `GET /model-info` : Retourne le modèle MLflow actuellement chargé en mémoire.
+        - `POST /predict` : Reçoit les caractéristiques en JSON et retourne la prédiction.
+        
+        *(La documentation Swagger complète de l'API est accessible sur le port 8000 via `/docs`)*
+        """)
+
+api_url = st.text_input("URL de l'API (Réseau Interne Docker)", value=API_URL)
 
 predict_tab, history_tab = st.tabs(["Prédiction", "Historique"])
 
