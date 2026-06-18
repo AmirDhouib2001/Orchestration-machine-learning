@@ -175,3 +175,28 @@ def model_info() -> dict:
     if "model_info" in ml:
         return ml["model_info"]
     raise HTTPException(status_code=503, detail="Modèle non chargé")
+
+@app.get("/models")
+def get_models() -> dict:
+    """Renvoie la liste des modèles entraînés via MLflow."""
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    experiment = mlflow.get_experiment_by_name("League_of_Legends_Models")
+    if not experiment:
+        return {"models": []}
+        
+    runs = mlflow.search_runs(
+        experiment_ids=[experiment.experiment_id],
+        order_by=["metrics.f1 DESC"],
+    )
+    if runs.empty: # type: ignore
+        return {"models": []}
+        
+    models_list = []
+    for _, run in runs.iterrows(): # type: ignore
+        models_list.append({
+            "run_id": run.run_id, # type: ignore
+            "name": run.get("tags.mlflow.runName", "Modèle Inconnu"), # type: ignore
+            "f1_score": run.get("metrics.f1", 0.0), # type: ignore
+            "accuracy": run.get("metrics.accuracy", 0.0) # type: ignore
+        })
+    return {"models": models_list}
