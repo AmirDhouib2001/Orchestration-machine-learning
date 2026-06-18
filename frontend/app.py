@@ -131,7 +131,7 @@ st.markdown("""
         letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-top: 25px;
-        margin-bottom: -15px;
+        margin-bottom: 5px;
     }
     
     /* Gold accent button for Swagger */
