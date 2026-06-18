@@ -83,6 +83,12 @@ html_code = f"""
       <div style="display: flex; flex-direction: column; gap: 8px;">
         <a href="https://github.com/AmirDhouib2001/Orchestration-machine-learning" target="_blank" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 13px; border-radius: 10px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.06); color: #C8D0E0; text-decoration: none; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='rgba(255,255,255,.07)'; this.style.borderColor='rgba(255,255,255,.12)';" onmouseout="this.style.background='rgba(255,255,255,.035)'; this.style.borderColor='rgba(255,255,255,.06)';">README (GitHub)<span style="color: #5C6679;">↗</span></a>
         <a :href="mlflowUrl" target="_blank" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 13px; border-radius: 10px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.06); color: #C8D0E0; text-decoration: none; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='rgba(255,255,255,.07)'; this.style.borderColor='rgba(255,255,255,.12)';" onmouseout="this.style.background='rgba(255,255,255,.035)'; this.style.borderColor='rgba(255,255,255,.06)';">Dashboard MLflow<span style="color: #5C6679;">↗</span></a>
+        <div style="position: relative;" @mouseover="showAirflowTooltip = true" @mouseleave="showAirflowTooltip = false">
+            <a :href="airflowUrl" target="_blank" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 13px; border-radius: 10px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.06); color: #C8D0E0; text-decoration: none; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='rgba(255,255,255,.07)'; this.style.borderColor='rgba(255,255,255,.12)';" onmouseout="this.style.background='rgba(255,255,255,.035)'; this.style.borderColor='rgba(255,255,255,.06)';">Dashboard Airflow<span style="color: #5C6679;">↗</span></a>
+            <div v-show="showAirflowTooltip" style="position: absolute; left: 105%; top: 50%; transform: translateY(-50%); background: #1C2333; color: #E6EAF2; padding: 6px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 4px 12px rgba(0,0,0,.3); z-index: 100;">
+                User: <strong>admin</strong><br>Pass: <strong>admin</strong>
+            </div>
+        </div>
       </div>
     </div>
 
@@ -445,13 +451,21 @@ createApp({{
         return `http://${{host}}:8000/docs`;
     }});
 
+    const airflowUrl = computed(() => {{
+        let host = 'localhost';
+        try {{ host = window.parent.location.hostname || window.location.hostname || 'localhost'; }} catch (e) {{ host = window.location.hostname || 'localhost'; }}
+        return `http://${{host}}:8080`;
+    }});
+    
+    const showAirflowTooltip = ref(false);
+
     return {{
       tab, apiUrl, blue, red,
       bluePct, redPct, loading, error,
       statGroups, activeModel, modelsList,
       bump, doPredict, resetData, loadExample,
       blueFav, confidence, favoriteLabel, favoriteColor,
-      tabBase, tabOn, mlflowUrl, swaggerUrl, parsedReadme
+      tabBase, tabOn, mlflowUrl, swaggerUrl, airflowUrl, showAirflowTooltip, parsedReadme
     }};
   }}
 }}).mount('#app');
