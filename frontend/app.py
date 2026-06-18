@@ -17,12 +17,16 @@ st.set_page_config(page_title="Prédiction LoL", layout="wide")
 st.title("League of Legends - Prédiction de Victoire (Équipe Bleue) - par Amir DHOUIB")
 
 with st.sidebar:
+    st.markdown("### 👨‍💻 Réalisé par : Amir DHOUIB")
+    st.markdown("---")
+    
     st.header("🔗 Liens Utiles")
     st.link_button("📖 Voir le README (Projet GitHub)", "https://github.com/AmirDhouib2001/Orchestration-machine-learning#readme")
     st.link_button("📈 Dashboard MLflow", "http://158.178.195.9:5000")
     
     st.markdown("---")
     st.header("⚙️ API FastAPI")
+    st.link_button("⚡ Tester l'API (Swagger UI)", "http://158.178.195.9:8000/docs")
     if st.button("Afficher les Endpoints"):
         st.session_state.show_api_details = not st.session_state.get("show_api_details", False)
         
