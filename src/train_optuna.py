@@ -112,7 +112,11 @@ def train_with_optuna(
 
         mlflow.log_params(best_params)
         mlflow.log_metrics(metrics)
-        mlflow.sklearn.log_model(best_pipeline, artifact_path="model")
+        mlflow.sklearn.log_model(
+            best_pipeline,
+            artifact_path="model",
+            skops_trusted_types=["src.features.add_lol_synergies"],
+        )
 
 
 def main():

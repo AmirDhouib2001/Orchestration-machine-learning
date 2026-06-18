@@ -61,7 +61,11 @@ def train(c: float = 1.0, max_iter: int = 1000) -> dict:
         mlflow.log_metrics(metrics)
 
         # TODO (S5-6) : logger le modele avec mlflow.sklearn.log_model
-        mlflow.sklearn.log_model(model, artifact_path="model")
+        mlflow.sklearn.log_model(
+            model,
+            artifact_path="model",
+            skops_trusted_types=["src.features.add_lol_synergies"],
+        )
 
         # TODO (S5-7 bonus) : sauvegarder la matrice de confusion en image et la logger en artefact
         cm = confusion_matrix(y_test, preds)

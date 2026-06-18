@@ -64,7 +64,11 @@ def train_and_log(
         # Enregistrement dans MLflow
         mlflow.log_params(grid_search.best_params_)
         mlflow.log_metrics(metrics)
-        mlflow.sklearn.log_model(best_model, artifact_path="model")
+        mlflow.sklearn.log_model(
+            best_model,
+            artifact_path="model",
+            skops_trusted_types=["src.features.add_lol_synergies"],
+        )
 
 
 def main():
