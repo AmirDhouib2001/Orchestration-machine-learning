@@ -58,6 +58,8 @@ jobs:
 
       - name: Donnees + entrainement de la baseline
         run: uv run python -m src.train
+        env:
+          MLFLOW_TRACKING_URI: file:./mlruns
 
       - name: Publication du modele en artefact
         uses: actions/upload-artifact@v4
