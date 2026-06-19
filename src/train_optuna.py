@@ -9,8 +9,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import f1_score, roc_auc_score
+from sklearn.metrics import f1_score, roc_auc_score, confusion_matrix
 from xgboost import XGBClassifier
+import matplotlib.pyplot as plt
+import seaborn as sns
+from pathlib import Path
 
 from src.config import MLFLOW_TRACKING_URI
 from src.data import load_data, split
@@ -112,6 +115,28 @@ def train_with_optuna(
 
         mlflow.log_params(best_params)
         mlflow.log_metrics(metrics)
+
+        # Sauvegarder la matrice de confusion en image et la logger en artefact
+        cm = confusion_matrix(y_test, preds)
+        plt.figure(figsize=(6, 4))
+        sns.heatmap(
+            cm,
+            annot=True,
+            fmt="d",
+            cmap="Blues",
+            xticklabels=["Red Win", "Blue Win"],
+            yticklabels=["Red Win", "Blue Win"],
+        )
+        plt.title(f"Matrice de Confusion ({run_name})")
+        plt.ylabel("Vraie valeur")
+        plt.xlabel("Prédiction")
+
+        cm_path = "confusion_matrix.png"
+        plt.savefig(cm_path)
+        mlflow.log_artifact(cm_path)
+        plt.close()
+        Path(cm_path).unlink(missing_ok=True)
+
         mlflow.sklearn.log_model(
             best_pipeline,
             artifact_path="model",

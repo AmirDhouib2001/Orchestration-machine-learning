@@ -121,6 +121,7 @@ html_code = f"""
 
       <div style="display: flex; gap: 4px; margin-top: 24px; border-bottom: 1px solid rgba(255,255,255,.07);">
         <button @click="tab = 'prediction'" :style="tab === 'prediction' ? tabOn : tabBase">Prédiction</button>
+        <button @click="tab = 'evaluation'" :style="tab === 'evaluation' ? tabOn : tabBase">Évaluation</button>
         <button @click="tab = 'models'" :style="tab === 'models' ? tabOn : tabBase">Modèles Entraînés</button>
         <button @click="tab = 'about'" :style="tab === 'about' ? tabOn : tabBase">À propos du projet</button>
       </div>
@@ -248,19 +249,44 @@ html_code = f"""
                   <tr style="background: rgba(255,255,255,.05); border-bottom: 1px solid rgba(255,255,255,.1);">
                       <th style="padding: 12px 16px; font-weight: 600;">Nom du Modèle</th>
                       <th style="padding: 12px 16px; font-weight: 600;">F1-Score</th>
-                      <th style="padding: 12px 16px; font-weight: 600;">Accuracy</th>
+                      <th style="padding: 12px 16px; font-weight: 600;">ROC-AUC</th>
                   </tr>
               </thead>
               <tbody>
                   <tr v-for="(m, i) in modelsList" :key="m.run_id" :style="i !== modelsList.length - 1 ? 'border-bottom: 1px solid rgba(255,255,255,.05);' : ''">
                       <td style="padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 13px;">{{{{ m.name }}}}</td>
                       <td style="padding: 12px 16px; color: #5FB0FF; font-weight: 600;">{{{{ m.f1_score.toFixed(4) }}}}</td>
-                      <td style="padding: 12px 16px; color: #9FB6D6;">{{{{ m.accuracy.toFixed(4) }}}}</td>
+                      <td style="padding: 12px 16px; color: #9FB6D6;">{{{{ m.roc_auc.toFixed(4) }}}}</td>
                   </tr>
               </tbody>
           </table>
       </div>
       <div v-else style="color: #A8B0C2; font-size: 14px;">Chargement des modèles ou aucun modèle trouvé...</div>
+    </div>
+
+    <div v-if="tab === 'evaluation'" style="padding: 34px 40px 56px; max-width: 960px;">
+      <h2 style="margin: 0 0 14px; font-family: 'Rajdhani'; font-weight: 700; font-size: 24px; color: #E6EAF2;">Évaluation du Modèle Actif</h2>
+      
+      <div v-if="activeModel" style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 30px;">
+        <div style="flex: 1; min-width: 200px; padding: 22px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;">
+            <div style="font-family: 'Rajdhani'; font-size: 14px; font-weight: 600; color: #8A93A6; text-transform: uppercase; letter-spacing: .1em;">Score F1</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 700; color: #5FB0FF; margin-top: 8px;">{{{{ activeModel.f1_score.toFixed(4) }}}}</div>
+            <div style="font-size: 12px; color: #7C859A; margin-top: 8px;">Équilibre entre précision et rappel</div>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px; padding: 22px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;">
+            <div style="font-family: 'Rajdhani'; font-size: 14px; font-weight: 600; color: #8A93A6; text-transform: uppercase; letter-spacing: .1em;">ROC-AUC</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 700; color: #FF7B88; margin-top: 8px;">{{{{ activeModel.roc_auc ? activeModel.roc_auc.toFixed(4) : 'N/A' }}}}</div>
+            <div style="font-size: 12px; color: #7C859A; margin-top: 8px;">Capacité à bien séparer les classes</div>
+        </div>
+      </div>
+      <div v-else style="color: #A8B0C2; font-size: 14px; margin-bottom: 30px;">Chargement des métriques...</div>
+
+      <h3 style="margin: 0 0 16px; font-family: 'Rajdhani'; color: #E6EAF2;">Matrice de Confusion</h3>
+      <div style="background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 20px; display: inline-block;">
+          <img v-if="activeModel && activeModel.run_id" :src="`${{mlflowUrl}}/get-artifact?path=confusion_matrix.png&run_uuid=${{activeModel.run_id}}`" alt="Matrice de confusion" style="max-width: 100%; border-radius: 8px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <div style="display: none; color: #8A93A6; font-size: 14px; font-style: italic; padding: 20px;">L'artefact 'confusion_matrix.png' n'a pas été généré ou est introuvable pour ce modèle. Relancez l'entraînement pour la générer.</div>
+      </div>
     </div>
 
     <div v-if="tab === 'about'" style="padding: 34px 40px 56px; max-width: 960px;">

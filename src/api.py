@@ -55,9 +55,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         f"🏆 Chargement du meilleur modèle ({best_run_name}, F1: {best_f1:.3f})"
     )
 
+    best_roc_auc = runs.iloc[0].get("metrics.roc_auc", 0.0)
+
     # 3. Chargement du modèle original sklearn directement depuis MLflow !
     ml["model"] = mlflow.sklearn.load_model(f"runs:/{best_run_id}/model")
-    ml["model_info"] = {"model_name": best_run_name, "f1_score": best_f1}
+    ml["model_info"] = {
+        "model_name": best_run_name, 
+        "f1_score": best_f1,
+        "roc_auc": best_roc_auc,
+        "run_id": best_run_id
+    }
 
     yield
     ml.clear()
@@ -197,6 +204,6 @@ def get_models() -> dict:
             "run_id": run.run_id, # type: ignore
             "name": run.get("tags.mlflow.runName", "Modèle Inconnu"), # type: ignore
             "f1_score": run.get("metrics.f1", 0.0), # type: ignore
-            "accuracy": run.get("metrics.accuracy", 0.0) # type: ignore
+            "roc_auc": run.get("metrics.roc_auc", 0.0) # type: ignore
         })
     return {"models": models_list}
