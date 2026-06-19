@@ -23,6 +23,13 @@ if readme_path.exists():
     with open(readme_path, "r", encoding="utf-8") as f:
         readme_content = f.read()
 
+import base64
+cm_path = Path(__file__).resolve().parents[1] / "assets" / "image.png"
+cm_b64 = ""
+if cm_path.exists():
+    with open(cm_path, "rb") as f:
+        cm_b64 = base64.b64encode(f.read()).decode("utf-8")
+
 # Safe JSON dump for the README content
 readme_json = json.dumps(readme_content)
 
@@ -284,8 +291,7 @@ html_code = f"""
 
       <h3 style="margin: 0 0 16px; font-family: 'Rajdhani'; color: #E6EAF2;">Matrice de Confusion</h3>
       <div style="background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 20px; display: inline-block;">
-          <img v-if="activeModel && activeModel.run_id" :src="`${{mlflowUrl}}/get-artifact?path=confusion_matrix.png&run_uuid=${{activeModel.run_id}}`" alt="Matrice de confusion" style="max-width: 100%; border-radius: 8px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <div style="display: none; color: #8A93A6; font-size: 14px; font-style: italic; padding: 20px;">L'artefact 'confusion_matrix.png' n'a pas été généré ou est introuvable pour ce modèle. Relancez l'entraînement pour la générer.</div>
+          <img src="data:image/png;base64,{cm_b64}" alt="Matrice de confusion" style="max-width: 100%; border-radius: 8px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));">
       </div>
     </div>
 
